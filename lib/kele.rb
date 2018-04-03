@@ -25,4 +25,11 @@ class Kele
     response = self.class.get("/mentors/#{mentor_id}/student_availability", headers: { "authorization" => @auth_token }, body: { "id": mentor_id }).body
     JSON.parse(response)
   end
+
+  def get_messages(page = nil)
+    num_of_pages = (self.class.get("/message_threads", headers: { "authorization" => @auth_token})["count"] / 10.to_f).ceil
+
+    response = self.class.get("/message_threads", headers: { "authorization" => @auth_token}, body: { "page": page }).body
+    JSON.parse(response)
+  end
 end
