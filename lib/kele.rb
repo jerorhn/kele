@@ -26,10 +26,20 @@ class Kele
     JSON.parse(response)
   end
 
-  def get_messages(page = nil)
-    num_of_pages = (self.class.get("/message_threads", headers: { "authorization" => @auth_token})["count"] / 10.to_f).ceil
+  def get_messages(*page)
+    if page == []
+      response = self.class.get("/message_threads", headers: { "authorization" => @auth_token})
+    else
+      response = self.class.get("/message_threads?page=#{page[0]}", headers: { "authorization" => @auth_token})
+    end
+    JSON.parse(response.body)
+  end
 
-    response = self.class.get("/message_threads", headers: { "authorization" => @auth_token}, body: { "page": page }).body
-    JSON.parse(response)
+  def create_message(sender, recipient_id, token, subject, stripped_text)
+    if token == ''
+      response = self.class.post("/messages", headers: { "authorization" => @auth_token }, body: { "sender": sender, "recipient_id": recipient_id, "subject": subject, "stripped-text" => stripped_text }).body
+    else
+      response = self.class.post("/messages", headers: { "authorization" => @auth_token }, body: { "sender": sender, "recipient_id": recipient_id, "token": token, "stripped-text" => stripped_text }).body
+    end
   end
 end
