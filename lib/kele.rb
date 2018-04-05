@@ -26,11 +26,11 @@ class Kele
     JSON.parse(response)
   end
 
-  def get_messages(*page)
-    if page == []
+  def get_messages(page = nil)
+    if page.nil?
       response = self.class.get("/message_threads", headers: { "authorization" => @auth_token})
     else
-      response = self.class.get("/message_threads?page=#{page[0]}", headers: { "authorization" => @auth_token})
+      response = self.class.get("/message_threads", headers: { "authorization" => @auth_token}, body: { "page": page })
     end
     JSON.parse(response.body)
   end
